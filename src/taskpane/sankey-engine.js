@@ -446,10 +446,8 @@ export class SankeyEngine {
     const svgElement = this.container.querySelector("svg");
     if (!svgElement) return null;
 
-    const gElement = svgElement.querySelector("g");
-    if (!gElement) return null;
-
-    const bbox = gElement.getBBox();
+    // Measure the entire SVG content, not just one <g>
+    const bbox = svgElement.getBBox();
     const padding = 15;
     return {
       x: bbox.x - padding,
