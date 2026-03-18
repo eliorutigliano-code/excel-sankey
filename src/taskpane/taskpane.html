@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sankey Diagram</title>
+  <link rel="stylesheet" href="taskpane.css" />
+
+  <!-- Office.js -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3v18h18" />
+          <path d="M7 16l4-8 4 4 4-6" />
+        </svg>
+      </div>
+      <h1>Sankey Diagram</h1>
+    </header>
+
+    <!-- Status message area -->
+    <div id="status-area" class="status-area hidden">
+      <span id="status-icon" class="status-icon"></span>
+      <span id="status-message"></span>
+    </div>
+
+    <!-- Data section -->
+    <section class="section">
+      <h2>Data Source</h2>
+      <p class="help-text">
+        Select cells in your spreadsheet containing flow data, then click "Read Selection".
+      </p>
+      <div class="data-formats">
+        <div class="format-hint">
+          <strong>Format A:</strong> Source | Target | Value
+        </div>
+        <div class="format-hint">
+          <strong>Format B:</strong> Stage1 | Stage2 | ... | Value
+        </div>
+      </div>
+      <button id="btn-read-data" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M3 9h18M9 3v18" />
+        </svg>
+        Read Selection
+      </button>
+      <div id="data-preview" class="data-preview hidden">
+        <span id="data-summary"></span>
+      </div>
+    </section>
+
+    <!-- Settings section -->
+    <section class="section collapsible">
+      <h2 class="section-toggle" id="toggle-settings">
+        Settings
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </h2>
+      <div id="settings-panel" class="settings-panel collapsed">
+        <div class="setting-row">
+          <label for="opt-alignment">Node Alignment</label>
+          <select id="opt-alignment">
+            <option value="justify" selected>Justify</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+            <option value="center">Center</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label for="opt-node-width">Node Width</label>
+          <input type="range" id="opt-node-width" min="8" max="40" value="20" />
+          <span id="opt-node-width-val">20</span>
+        </div>
+        <div class="setting-row">
+          <label for="opt-node-padding">Node Spacing</label>
+          <input type="range" id="opt-node-padding" min="4" max="40" value="16" />
+          <span id="opt-node-padding-val">16</span>
+        </div>
+        <div class="setting-row">
+          <label for="opt-link-opacity">Link Opacity</label>
+          <input type="range" id="opt-link-opacity" min="10" max="80" value="40" />
+          <span id="opt-link-opacity-val">0.4</span>
+        </div>
+        <div class="setting-row">
+          <label for="opt-show-values">
+            <input type="checkbox" id="opt-show-values" checked />
+            Show values on labels
+          </label>
+        </div>
+        <div class="setting-row">
+          <label for="opt-color-scheme">Color Scheme</label>
+          <select id="opt-color-scheme">
+            <option value="default" selected>Default</option>
+            <option value="tableau">Tableau 10</option>
+            <option value="category">D3 Category</option>
+            <option value="warm">Warm Tones</option>
+            <option value="cool">Cool Tones</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram area -->
+    <section class="section diagram-section">
+      <div id="sankey-container" class="sankey-container">
+        <div class="placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+            <path d="M3 3v18h18" />
+            <path d="M7 16l4-8 4 4 4-6" />
+          </svg>
+          <p>Select data and click "Read Selection" to generate your Sankey diagram</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Export section -->
+    <section class="section" id="export-section" style="display:none">
+      <h2>Export</h2>
+      <div class="btn-group">
+        <button id="btn-export-svg" class="btn btn-secondary">
+          Export SVG
+        </button>
+        <button id="btn-export-png" class="btn btn-secondary">
+          Export PNG
+        </button>
+        <button id="btn-insert-image" class="btn btn-secondary">
+          Insert in Sheet
+        </button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
