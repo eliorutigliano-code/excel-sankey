@@ -33,7 +33,7 @@ export class SankeyEngine {
       linkHoverOpacity: options.linkHoverOpacity || 0.7,
       fontSize: options.fontSize || 12,
       title: options.title || "",
-      margin: options.margin || { top: 10, right: 120, bottom: 10, left: 10 },
+      margin: options.margin || { top: 10, right: 120, bottom: 30, left: 10 },
       numberFormat: options.numberFormat || ",.0f",
       showValues: options.showValues !== undefined ? options.showValues : true,
       showTooltip: options.showTooltip !== undefined ? options.showTooltip : true,
@@ -91,16 +91,13 @@ export class SankeyEngine {
     for (const d of depths) nodesPerDepth[d]++;
     const maxNodesInColumn = Math.max(...nodesPerDepth);
 
-    // Count total unique nodes for overall complexity
-    const totalNodes = parsedData.nodes.length;
-
     // Width: scale with stages but keep compact
     const stageSpacing = 120;
     const width = Math.max(400, numStages * stageSpacing + margin.left + margin.right);
 
-    // Height: based on total nodes to give small flows enough vertical space
-    const nodeMinHeight = 60;
-    const height = Math.max(400, totalNodes * (nodeMinHeight + nodePadding));
+    // Height: based on tallest column
+    const nodeMinHeight = 80;
+    const height = Math.max(350, maxNodesInColumn * (nodeMinHeight + nodePadding) + margin.top + margin.bottom + 30);
 
     return { width, height };
   }
