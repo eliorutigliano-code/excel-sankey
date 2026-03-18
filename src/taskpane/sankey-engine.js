@@ -91,13 +91,16 @@ export class SankeyEngine {
     for (const d of depths) nodesPerDepth[d]++;
     const maxNodesInColumn = Math.max(...nodesPerDepth);
 
-    // Width: each stage needs space for the node + gap between stages
-    const stageSpacing = 180;
-    const width = Math.max(500, numStages * stageSpacing + margin.left + margin.right);
+    // Count total unique nodes for overall complexity
+    const totalNodes = parsedData.nodes.length;
 
-    // Height: tallest column dictates height — each node needs ~60px min
-    const nodeMinHeight = 50;
-    const height = Math.max(350, maxNodesInColumn * (nodeMinHeight + nodePadding) + margin.top + margin.bottom);
+    // Width: scale with stages but keep compact
+    const stageSpacing = 120;
+    const width = Math.max(400, numStages * stageSpacing + margin.left + margin.right);
+
+    // Height: based on total nodes to give small flows enough vertical space
+    const nodeMinHeight = 60;
+    const height = Math.max(400, totalNodes * (nodeMinHeight + nodePadding));
 
     return { width, height };
   }
@@ -247,8 +250,8 @@ export class SankeyEngine {
       .select(this.container)
       .append("svg")
       .attr("viewBox", `0 0 ${width} ${totalHeight}`)
-      .attr("width", "100%")
-      .attr("height", "100%");
+      .attr("width", width)
+      .attr("height", totalHeight);
 
     // Render title
     if (title) {
@@ -480,11 +483,13 @@ export class SankeyEngine {
     let svgString = serializer.serializeToString(svgElement);
     svgString = '<?xml version="1.0" standalone="no"?>\n' + svgString;
 
-    // Restore original viewBox
+    // Restore original viewBox and dimensions
     if (originalViewBox) {
+      const originalWidth = svgElement.dataset.originalWidth;
+      const originalHeight = svgElement.dataset.originalHeight;
       svgElement.setAttribute("viewBox", originalViewBox);
-      svgElement.setAttribute("width", "100%");
-      svgElement.setAttribute("height", "100%");
+      svgElement.setAttribute("width", originalWidth || this.options.width);
+      svgElement.setAttribute("height", originalHeight || (this.options.height + (this.options.title ? 30 : 0)));
     }
 
     return svgString;
