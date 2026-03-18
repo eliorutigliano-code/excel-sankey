@@ -306,8 +306,9 @@ export class SankeyEngine {
         }
       });
 
-    // Node labels — name and value to the right of each node
+    // Node labels — name and value to the right, only for terminal nodes (no outgoing links)
     node
+      .filter((d) => d.sourceLinks.length === 0)
       .append("text")
       .attr("x", (d) => d.x1 + 6)
       .attr("y", (d) => (d.y1 + d.y0) / 2)
@@ -319,10 +320,7 @@ export class SankeyEngine {
       .text((d) => {
         const displayName = this._displayName(d.name);
         if (this.options.showValues) {
-          const total = Math.max(
-            d.sourceLinks.reduce((s, l) => s + l.value, 0),
-            d.targetLinks.reduce((s, l) => s + l.value, 0)
-          );
+          const total = d.targetLinks.reduce((s, l) => s + l.value, 0);
           return `${displayName} (${format(total)})`;
         }
         return displayName;
