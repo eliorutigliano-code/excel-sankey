@@ -176,9 +176,10 @@ export class SankeyEngine {
     const { width, height, margin, nodeWidth, nodePadding, alignment, colorScheme, title } = this.options;
 
     const titleHeight = title ? 30 : 0;
+    const totalHeight = height + titleHeight;
     const effectiveMarginTop = margin.top + titleHeight;
     const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - effectiveMarginTop - margin.bottom;
+    const innerHeight = height - margin.top - margin.bottom;
 
     // Clear previous render
     d3.select(this.container).selectAll("*").remove();
@@ -187,7 +188,7 @@ export class SankeyEngine {
     const svgRoot = d3
       .select(this.container)
       .append("svg")
-      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("viewBox", `0 0 ${width} ${totalHeight}`)
       .attr("width", "100%")
       .attr("height", "100%");
 
