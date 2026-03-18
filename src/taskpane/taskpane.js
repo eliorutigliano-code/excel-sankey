@@ -61,7 +61,7 @@ function initializeUI() {
   document.getElementById("opt-number-format").addEventListener("change", onSettingsChange);
   document.getElementById("opt-show-values").addEventListener("change", onSettingsChange);
 
-  const rangeInputs = ["opt-node-width", "opt-node-padding", "opt-link-opacity"];
+  const rangeInputs = ["opt-node-width", "opt-node-padding", "opt-stage-spacing", "opt-link-opacity"];
   rangeInputs.forEach((id) => {
     const input = document.getElementById(id);
     input.addEventListener("input", () => {
@@ -153,6 +153,7 @@ function getCurrentOptions() {
     alignment: document.getElementById("opt-alignment").value,
     nodeWidth: parseInt(document.getElementById("opt-node-width").value),
     nodePadding: parseInt(document.getElementById("opt-node-padding").value),
+    stageSpacing: parseInt(document.getElementById("opt-stage-spacing").value),
     linkOpacity: parseInt(document.getElementById("opt-link-opacity").value) / 100,
     showValues: document.getElementById("opt-show-values").checked,
     numberFormat: document.getElementById("opt-number-format").value,

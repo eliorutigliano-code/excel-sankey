@@ -91,8 +91,8 @@ export class SankeyEngine {
     for (const d of depths) nodesPerDepth[d]++;
     const maxNodesInColumn = Math.max(...nodesPerDepth);
 
-    // Width: scale with stages but keep compact
-    const stageSpacing = 120;
+    // Width: scale with stages
+    const stageSpacing = options.stageSpacing || 120;
     const width = Math.max(400, numStages * stageSpacing + margin.left + margin.right);
 
     // Height: based on tallest column
