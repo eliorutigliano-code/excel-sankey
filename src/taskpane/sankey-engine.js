@@ -32,6 +32,7 @@ export class SankeyEngine {
       linkOpacity: options.linkOpacity || 0.4,
       linkHoverOpacity: options.linkHoverOpacity || 0.7,
       fontSize: options.fontSize || 12,
+      title: options.title || "",
       margin: options.margin || { top: 10, right: 120, bottom: 10, left: 10 },
       numberFormat: options.numberFormat || ",.0f",
       showValues: options.showValues !== undefined ? options.showValues : true,
@@ -172,23 +173,41 @@ export class SankeyEngine {
    */
   render(parsedData) {
     this.data = parsedData;
-    const { width, height, margin, nodeWidth, nodePadding, alignment, colorScheme } = this.options;
+    const { width, height, margin, nodeWidth, nodePadding, alignment, colorScheme, title } = this.options;
 
+    const titleHeight = title ? 30 : 0;
+    const effectiveMarginTop = margin.top + titleHeight;
     const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+    const innerHeight = height - effectiveMarginTop - margin.bottom;
 
     // Clear previous render
     d3.select(this.container).selectAll("*").remove();
 
     // Create SVG
-    this.svg = d3
+    const svgRoot = d3
       .select(this.container)
       .append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("width", "100%")
-      .attr("height", "100%")
+      .attr("height", "100%");
+
+    // Render title
+    if (title) {
+      svgRoot
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", margin.top + 18)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 16)
+        .attr("font-weight", "bold")
+        .attr("font-family", "Segoe UI, sans-serif")
+        .attr("fill", "#333")
+        .text(title);
+    }
+
+    this.svg = svgRoot
       .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .attr("transform", `translate(${margin.left},${effectiveMarginTop})`);
 
     // Create tooltip
     if (this.options.showTooltip) {

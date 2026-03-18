@@ -55,6 +55,7 @@ function initializeUI() {
   });
 
   // Settings change handlers
+  document.getElementById("opt-title").addEventListener("input", onSettingsChange);
   document.getElementById("opt-alignment").addEventListener("change", onSettingsChange);
   document.getElementById("opt-color-scheme").addEventListener("change", onSettingsChange);
   document.getElementById("opt-number-format").addEventListener("change", onSettingsChange);
@@ -148,6 +149,7 @@ async function readSelectedData() {
 // ==========================================
 function getCurrentOptions() {
   return {
+    title: document.getElementById("opt-title").value.trim(),
     alignment: document.getElementById("opt-alignment").value,
     nodeWidth: parseInt(document.getElementById("opt-node-width").value),
     nodePadding: parseInt(document.getElementById("opt-node-padding").value),
