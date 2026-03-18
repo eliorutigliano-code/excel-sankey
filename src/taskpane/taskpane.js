@@ -80,10 +80,7 @@ function initializeUI() {
   document.getElementById("btn-export-png").addEventListener("click", exportPNG);
   document.getElementById("btn-insert-image").addEventListener("click", insertImageInSheet);
 
-  // Window resize
-  window.addEventListener("resize", () => {
-    if (sankeyEngine) sankeyEngine.resize();
-  });
+  // Window resize — no-op, chart sizes itself from data
 }
 
 // ==========================================
@@ -113,15 +110,18 @@ async function readSelectedData() {
       const container = document.getElementById("sankey-container");
       container.innerHTML = ""; // clear placeholder
 
-      const containerRect = container.getBoundingClientRect();
-
       const options = getCurrentOptions();
-      options.width = Math.max(containerRect.width, 400);
-      options.height = Math.max(350, Math.min(600, rowCount * 20));
+
+      // Parse data first to compute dimensions from it
+      const tempEngine = new SankeyEngine(container, options);
+      const parsedData = tempEngine.parseData(values);
+
+      // Auto-size based on data complexity
+      const computed = SankeyEngine.computeDimensions(parsedData, options);
+      options.width = computed.width;
+      options.height = computed.height;
 
       sankeyEngine = new SankeyEngine(container, options);
-
-      const parsedData = sankeyEngine.parseData(values);
 
       if (parsedData.nodes.length === 0 || parsedData.links.length === 0) {
         showStatus("No valid flow data found. Check your data format.", "error");
@@ -164,8 +164,11 @@ function onSettingsChange() {
   if (!sankeyEngine || !currentData) return;
 
   const options = getCurrentOptions();
-  sankeyEngine.update(options);
   const parsedData = sankeyEngine.parseData(currentData);
+  const computed = SankeyEngine.computeDimensions(parsedData, options);
+  options.width = computed.width;
+  options.height = computed.height;
+  sankeyEngine.update(options);
   sankeyEngine.render(parsedData);
 }
 

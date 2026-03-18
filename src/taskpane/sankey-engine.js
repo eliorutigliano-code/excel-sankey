@@ -45,6 +45,64 @@ export class SankeyEngine {
   }
 
   /**
+   * Calculate optimal dimensions based on parsed data
+   */
+  static computeDimensions(parsedData, options = {}) {
+    const nodeWidth = options.nodeWidth || 20;
+    const nodePadding = options.nodePadding || 16;
+    const margin = options.margin || { top: 10, right: 120, bottom: 10, left: 10 };
+
+    // Determine depth of each node by traversing links
+    const nodeCount = parsedData.nodes.length;
+    const depths = new Array(nodeCount).fill(0);
+    const linksBySource = new Map();
+    for (const link of parsedData.links) {
+      if (!linksBySource.has(link.source)) linksBySource.set(link.source, []);
+      linksBySource.get(link.source).push(link.target);
+    }
+
+    // BFS to assign depths
+    const visited = new Set();
+    // Find root nodes (no incoming links)
+    const hasIncoming = new Set(parsedData.links.map((l) => l.target));
+    const roots = [];
+    for (let i = 0; i < nodeCount; i++) {
+      if (!hasIncoming.has(i)) roots.push(i);
+    }
+    const queue = [...roots];
+    for (const r of roots) visited.add(r);
+
+    while (queue.length > 0) {
+      const node = queue.shift();
+      const targets = linksBySource.get(node) || [];
+      for (const t of targets) {
+        depths[t] = Math.max(depths[t], depths[node] + 1);
+        if (!visited.has(t)) {
+          visited.add(t);
+          queue.push(t);
+        }
+      }
+    }
+
+    const numStages = Math.max(...depths) + 1;
+
+    // Count nodes per depth level to find the tallest column
+    const nodesPerDepth = new Array(numStages).fill(0);
+    for (const d of depths) nodesPerDepth[d]++;
+    const maxNodesInColumn = Math.max(...nodesPerDepth);
+
+    // Width: each stage needs space for the node + gap between stages
+    const stageSpacing = 180;
+    const width = Math.max(500, numStages * stageSpacing + margin.left + margin.right);
+
+    // Height: tallest column dictates height — each node needs ~60px min
+    const nodeMinHeight = 50;
+    const height = Math.max(350, maxNodesInColumn * (nodeMinHeight + nodePadding) + margin.top + margin.bottom);
+
+    return { width, height };
+  }
+
+  /**
    * Parse raw spreadsheet data into Sankey-compatible format
    * Auto-detects data structure:
    *   - 3 columns: Source, Target, Value
