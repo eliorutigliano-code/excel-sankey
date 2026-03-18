@@ -306,13 +306,13 @@ export class SankeyEngine {
         }
       });
 
-    // Node labels
+    // Node labels — name and value to the right of each node
     node
       .append("text")
-      .attr("x", (d) => (d.x0 < innerWidth / 2 ? d.x1 + 6 : d.x0 - 6))
+      .attr("x", (d) => d.x1 + 6)
       .attr("y", (d) => (d.y1 + d.y0) / 2)
       .attr("dy", "0.35em")
-      .attr("text-anchor", (d) => (d.x0 < innerWidth / 2 ? "start" : "end"))
+      .attr("text-anchor", "start")
       .attr("font-size", this.options.fontSize)
       .attr("font-family", "Segoe UI, sans-serif")
       .attr("fill", "#333")
@@ -326,6 +326,30 @@ export class SankeyEngine {
           return `${displayName} (${format(total)})`;
         }
         return displayName;
+      });
+
+    // Stage labels — rotated 90° inside node boxes (only if box is tall enough)
+    node
+      .filter((d) => (d.y1 - d.y0) >= 30)
+      .append("text")
+      .attr("transform", (d) => {
+        const cx = (d.x0 + d.x1) / 2;
+        const cy = (d.y0 + d.y1) / 2;
+        return `translate(${cx},${cy}) rotate(-90)`;
+      })
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
+      .attr("font-size", Math.max(9, this.options.fontSize - 2))
+      .attr("font-family", "Segoe UI, sans-serif")
+      .attr("fill", "#fff")
+      .attr("font-weight", "600")
+      .attr("pointer-events", "none")
+      .text((d) => {
+        const name = this._displayName(d.name);
+        const nodeHeight = d.y1 - d.y0;
+        const charWidth = (this.options.fontSize - 2) * 0.6;
+        const maxChars = Math.floor(nodeHeight / charWidth);
+        return name.length > maxChars ? name.substring(0, maxChars - 1) + "\u2026" : name;
       });
 
     return this;
