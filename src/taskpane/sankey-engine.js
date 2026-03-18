@@ -340,15 +340,53 @@ export class SankeyEngine {
   }
 
   /**
+   * Measure the actual bounding box of all rendered SVG content
+   */
+  _getFullBBox() {
+    const svgElement = this.container.querySelector("svg");
+    if (!svgElement) return null;
+
+    const gElement = svgElement.querySelector("g");
+    if (!gElement) return null;
+
+    const bbox = gElement.getBBox();
+    const padding = 15;
+    return {
+      x: bbox.x - padding,
+      y: bbox.y - padding,
+      width: bbox.width + padding * 2,
+      height: bbox.height + padding * 2,
+    };
+  }
+
+  /**
    * Export the diagram as SVG string
    */
   exportSVG() {
     const svgElement = this.container.querySelector("svg");
     if (!svgElement) return null;
 
+    // Temporarily update viewBox to capture full content
+    const fullBBox = this._getFullBBox();
+    const originalViewBox = svgElement.getAttribute("viewBox");
+
+    if (fullBBox) {
+      svgElement.setAttribute("viewBox", `${fullBBox.x} ${fullBBox.y} ${fullBBox.width} ${fullBBox.height}`);
+      svgElement.setAttribute("width", fullBBox.width);
+      svgElement.setAttribute("height", fullBBox.height);
+    }
+
     const serializer = new XMLSerializer();
     let svgString = serializer.serializeToString(svgElement);
     svgString = '<?xml version="1.0" standalone="no"?>\n' + svgString;
+
+    // Restore original viewBox
+    if (originalViewBox) {
+      svgElement.setAttribute("viewBox", originalViewBox);
+      svgElement.setAttribute("width", "100%");
+      svgElement.setAttribute("height", "100%");
+    }
+
     return svgString;
   }
 
@@ -357,12 +395,16 @@ export class SankeyEngine {
    */
   exportPNG(scale = 2) {
     return new Promise((resolve, reject) => {
+      const fullBBox = this._getFullBBox();
+      const exportWidth = fullBBox ? fullBBox.width : this.options.width;
+      const exportHeight = fullBBox ? fullBBox.height : this.options.height;
+
       const svgString = this.exportSVG();
       if (!svgString) return reject(new Error("No SVG to export"));
 
       const canvas = document.createElement("canvas");
-      canvas.width = this.options.width * scale;
-      canvas.height = this.options.height * scale;
+      canvas.width = exportWidth * scale;
+      canvas.height = exportHeight * scale;
       const ctx = canvas.getContext("2d");
       ctx.scale(scale, scale);
 
@@ -373,7 +415,7 @@ export class SankeyEngine {
       img.onload = () => {
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, exportWidth, exportHeight);
         URL.revokeObjectURL(url);
         resolve(canvas.toDataURL("image/png"));
       };
