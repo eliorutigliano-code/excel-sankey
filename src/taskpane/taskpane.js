@@ -57,6 +57,7 @@ function initializeUI() {
   // Settings change handlers
   document.getElementById("opt-alignment").addEventListener("change", onSettingsChange);
   document.getElementById("opt-color-scheme").addEventListener("change", onSettingsChange);
+  document.getElementById("opt-number-format").addEventListener("change", onSettingsChange);
   document.getElementById("opt-show-values").addEventListener("change", onSettingsChange);
 
   const rangeInputs = ["opt-node-width", "opt-node-padding", "opt-link-opacity"];
@@ -152,6 +153,7 @@ function getCurrentOptions() {
     nodePadding: parseInt(document.getElementById("opt-node-padding").value),
     linkOpacity: parseInt(document.getElementById("opt-link-opacity").value) / 100,
     showValues: document.getElementById("opt-show-values").checked,
+    numberFormat: document.getElementById("opt-number-format").value,
     colorScheme: COLOR_SCHEMES[document.getElementById("opt-color-scheme").value] || COLOR_SCHEMES.default,
   };
 }

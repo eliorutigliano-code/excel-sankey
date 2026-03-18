@@ -94,6 +94,17 @@
           </label>
         </div>
         <div class="setting-row">
+          <label for="opt-number-format">Number Format</label>
+          <select id="opt-number-format">
+            <option value=",.0f" selected>1,234,567</option>
+            <option value="$,.0f">$1,234,567</option>
+            <option value="$,.2f">$1,234,567.89</option>
+            <option value=",.2f">1,234,567.89</option>
+            <option value=".3s">1.23M (SI)</option>
+            <option value="$.3s">$1.23M (SI)</option>
+          </select>
+        </div>
+        <div class="setting-row">
           <label for="opt-color-scheme">Color Scheme</label>
           <select id="opt-color-scheme">
             <option value="default" selected>Default</option>
