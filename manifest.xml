@@ -6,7 +6,7 @@
   xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
   xsi:type="TaskPaneApp">
 
-  <Id>a1b2c3d4-e5f6-7890-abcd-sankey000001</Id>
+  <Id>5edfd0d9-a4f1-4dd8-95b1-3c3723a142b6</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Sankey Diagram Add-in</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
